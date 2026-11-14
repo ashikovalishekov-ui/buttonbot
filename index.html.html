@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeleCraft — Telegram Message Designer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{--bg:#0b0e14;--panel:#121722;--panel2:#171e2b;--line:#252e3d;--muted:#8994a7;--text:#edf2fa;--accent:#62a8ff;--accent2:#8b7cff;--green:#43d6a0;--danger:#ff6f7d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% -10%,#1c2b43 0,transparent 38%),radial-gradient(ellipse at 90% 10%,#211d3d 0,transparent 30%),var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.top{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 4.2%;border-bottom:1px solid #ffffff12;background:#0b0e14c9;backdrop-filter:blur(16px);position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:12px;font-family:Manrope,sans-serif;font-weight:800;font-size:19px;letter-spacing:-.6px}.logo{width:37px;height:37px;border-radius:12px;background:linear-gradient(135deg,#64b5ff,#8b7cff);display:grid;place-items:center;color:#08111d;font-size:19px;box-shadow:0 6px 24px #609fff44}
+.brand small{display:block;font:500 10px 'DM Sans';color:var(--muted);letter-spacing:1.7px;margin-top:2px}
+.top-actions{display:flex;gap:10px;align-items:center}.status{font-size:12px;color:var(--muted);margin-right:8px}.status i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#657084;margin-right:7px}.status.ready i{background:var(--green);box-shadow:0 0 10px #43d6a0}
+.btn{border:1px solid var(--line);background:#1a2230;color:var(--text);padding:10px 14px;border-radius:10px;font-size:12px;font-weight:700;transition:.2s}.btn:hover{border-color:#5d8fc9;transform:translateY(-1px)}.btn.primary{background:linear-gradient(110deg,#428ee8,#7768e9);border:0;color:white;box-shadow:0 7px 20px #557fe533}.btn.ghost{background:transparent}.btn.danger{color:#ff9ba5}
+main{max-width:1440px;margin:0 auto;padding:34px 4.2% 60px}.heading{display:flex;justify-content:space-between;align-items:end;margin-bottom:25px}.eyebrow{color:#83b9ff;font-size:10px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase}.heading h1{font:800 clamp(25px,3vw,36px) Manrope;margin:8px 0 5px;letter-spacing:-1.4px}.heading p{margin:0;color:var(--muted);font-size:13px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(340px,.88fr);gap:20px;align-items:start}
+.panel{background:linear-gradient(160deg,#151c28,#111722);border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 18px 55px #0002}.panel-head{padding:17px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.panel-head h2{font:700 13px Manrope;margin:0;letter-spacing:.2px}.step{font-size:10px;color:#8ebcff;background:#253750;padding:5px 8px;border-radius:6px}.panel-body{padding:20px}
+.field{margin-bottom:17px}.field label,.field-title{display:block;color:#aeb9c9;font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:.25px}.input,.textarea,.select{width:100%;background:#0d131d;border:1px solid #293445;color:var(--text);border-radius:9px;padding:11px 12px;outline:none;font-size:13px;transition:.2s}.input:focus,.textarea:focus,.select:focus{border-color:#5a9ce9;box-shadow:0 0 0 3px #5a9ce91a}.textarea{min-height:155px;resize:vertical;line-height:1.6}.hint{font-size:10px;color:#78869a;margin-top:7px;line-height:1.5}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.tool{background:#202a39;border:1px solid #2b3748;color:#dce6f5;border-radius:7px;min-width:31px;height:30px;padding:0 9px;font-size:12px}.tool:hover{background:#2b3d56;border-color:#5389c5}.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
+.subsection{border-top:1px solid var(--line);padding-top:17px;margin-top:19px}.subhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.subhead strong{font-size:12px}.subhead span{font-size:10px;color:var(--muted)}
+.button-row{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin-bottom:8px}.button-row .input{padding:9px;font-size:11px}.remove{width:34px;border:1px solid #4a303a;background:#2b1b24;color:#ff8997;border-radius:8px}
+.add{width:100%;border:1px dashed #40516a;background:#131d2a;color:#9dc5f4;padding:10px;border-radius:9px;font-size:11px;font-weight:700}.add:hover{border-color:#75a9e6;background:#17263a}
+.imagebox{border:1px dashed #3a485d;border-radius:10px;padding:13px;background:#0d131d}.imagebox input{font-size:11px;color:var(--muted);width:100%}.image-preview{max-width:100%;max-height:180px;border-radius:9px;margin-top:10px;display:none}
+.actions{display:flex;gap:9px;margin-top:20px}.actions button{flex:1;padding:12px}
+.preview-wrap{padding:20px;background:radial-gradient(ellipse at 50% 0%,#24364d55,transparent 60%),#0e141e;min-height:390px}.preview-label{font-size:10px;color:#8190a5;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.phone{max-width:430px;margin:0 auto;background:#17212b;border:1px solid #2c3946;border-radius:17px;padding:16px 14px 18px;box-shadow:0 15px 50px #0005}
+.chat-top{display:flex;align-items:center;gap:10px;padding-bottom:13px;border-bottom:1px solid #ffffff10;margin-bottom:15px}.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#4ba9ee,#7668dc);display:grid;place-items:center;font-size:16px}.chat-top strong{font-size:12px;display:block}.chat-top small{font-size:10px;color:#8eabbc}
+.bubble{background:#243442;border-radius:4px 14px 14px 14px;padding:12px 13px;font-size:13px;line-height:1.55;overflow-wrap:anywhere;white-space:pre-wrap}.bubble img{width:100%;max-height:210px;object-fit:cover;border-radius:8px;margin-bottom:8px}.bubble a{color:#79c7ff}.bubble strong{font-weight:800}.bubble em{font-style:italic}.bubble u{text-decoration:underline}.bubble s{text-decoration:line-through}.bubble code{background:#17232c;padding:2px 4px;border-radius:4px;font-family:monospace}.preview-buttons{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}.preview-buttons a{background:#2b506a;color:#83ceff;text-decoration:none;text-align:center;border-radius:6px;padding:8px 5px;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.time{text-align:right;color:#91a4b1;font-size:9px;margin-top:5px}
+.preview-settings{display:flex;gap:8px;align-items:center;margin-top:15px;flex-wrap:wrap}.preview-settings label{font-size:10px;color:var(--muted)}.preview-settings select{max-width:150px;padding:7px;font-size:11px}
+.note{border:1px solid #3c354f;background:#211d30;color:#bcb3df;padding:11px 13px;border-radius:10px;font-size:10px;line-height:1.55;margin-top:14px}
+.modal-back{position:fixed;inset:0;background:#03060bd9;backdrop-filter:blur(8px);z-index:20;display:none;align-items:center;justify-content:center;padding:20px}.modal-back.show{display:flex}.modal{width:min(440px,100%);background:#151d29;border:1px solid #344155;border-radius:17px;padding:23px;box-shadow:0 25px 90px #0009}.modal h3{font:800 19px Manrope;margin:0 0 7px}.modal p{font-size:11px;color:var(--muted);line-height:1.6;margin:0 0 18px}.modal .field{margin-bottom:13px}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#1c2b36;border:1px solid #3b5e66;color:#c5f5e6;padding:11px 16px;border-radius:10px;font-size:12px;z-index:30;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{text-align:center;color:#657286;font-size:10px;margin-top:28px}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.preview-wrap{min-height:0}.heading{align-items:start;flex-direction:column;gap:12px}}
+@media(max-width:540px){.top{padding:0 15px;height:66px}.brand{font-size:16px}.status{display:none}main{padding:25px 13px 40px}.panel-body{padding:15px}.panel-head{padding:15px}.button-row{grid-template-columns:1fr 1fr 32px}.heading h1{font-size:27px}.actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><div class="logo">✦</div><div>TeleCraft<small>MESSAGE DESIGNER</small></div></div>
+  <div class="top-actions">
+    <span class="status" id="status"><i></i><span id="statusText">Bot ulanmagan</span></span>
+    <button class="btn" onclick="openSettings()">⚙ TOKEN SOZLAMALARI</button>
+  </div>
+</header>
+<main>
+  <div class="heading">
+    <div><div class="eyebrow">Telegram bot studio / 01</div><h1>Xabaringizni yarating.</h1><p>Matn, media va interaktiv tugmalarni bitta joyda loyihalashtiring.</p></div>
+    <button class="btn ghost" onclick="resetEditor()">↺ Tozalash</button>
+  </div>
+  <div class="workspace">
+    <section class="panel">
+      <div class="panel-head"><h2>✎ XABAR MUHARRIRI</h2><span class="step">01 / COMPOSE</span></div>
+      <div class="panel-body">
+        <div class="field"><label>CHAT ID</label><input class="input" id="chatId" placeholder="Masalan: 123456789" autocomplete="off"><div class="hint">Xabar yuboriladigan foydalanuvchi yoki guruh Chat ID raqami.</div></div>
+        <div class="field">
+          <label>XABAR MATNI</label>
+          <div class="toolbar">
+            <button class="tool" title="Qalin" onclick="insertTag('b')"><b>B</b></button>
+            <button class="tool" title="Kursiv" onclick="insertTag('i')"><i>I</i></button>
+            <button class="tool" title="Tagiga chizish" onclick="insertTag('u')"><u>U</u></button>
+            <button class="tool" title="Ustidan chizish" onclick="insertTag('s')"><s>S</s></button>
+            <button class="tool" title="Kod" onclick="insertTag('code')">&lt;/&gt;</button>
+            <button class="tool" title="Havola" onclick="insertLink()">↗ Link</button>
+            <button class="tool" title="Emoji" onclick="insertEmoji()">☻ Emoji</button>
+          </div>
+          <textarea class="textarea" id="message" placeholder="Assalomu alaykum!&#10;&#10;Bu yerga Telegram xabaringizni yozing..." oninput="updatePreview()"></textarea>
+          <div class="hint">Telegram HTML formatidan foydalaniladi. Formatlash tugmalari tanlangan matnga teg qo‘shadi.</div>
+        </div>
+        <div class="subsection">
+          <div class="subhead"><strong>▧ RASM BIRIKTIRISH</strong><span>OPTIONAL MEDIA</span></div>
+          <div class="imagebox"><input type="file" id="imageFile" accept="image/*" onchange="loadImage(this)"><img id="imagePreview" class="image-preview" alt="Rasm ko‘rinishi"></div>
+        </div>
+        <div class="subsection">
+          <div class="subhead"><strong>▦ INLINE TUGMALAR</strong><span id="buttonCount">0 TA TUGMA</span></div>
+          <div id="buttonList"></div>
+          <button class="add" onclick="addButton()">＋ Yangi tugma qo‘shish</button>
+          <div class="hint">Har bir tugma uchun nom va bosilganda ochiladigan URL manzilini kiriting. Tugmalar Telegram xabari ostida chiqadi.</div>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="copyJson()">JSON nusxalash</button>
+          <button class="btn primary" onclick="sendMessage()">➤ Telegram'ga yuborish</button>
+        </div>
+        <div class="note">Xavfsizlik: bot tokeni ushbu brauzerning localStorage xotirasida saqlanadi. Bu qulay, ammo sahifani begonalarga bermang va tokenni ommaviy hostingga joylashtirmang. Token oshkor bo‘lsa, BotFather orqali yangilang.</div>
+      </div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>◉ JONLI KO‘RINISH</h2><span class="step">02 / PREVIEW</span></div>
+      <div class="preview-wrap">
+        <div class="preview-label">Telegram chat preview</div>
+        <div class="phone">
+          <div class="chat-top"><div class="avatar">✦</div><div><strong>My Telegram Bot</strong><small>bot</small></div></div>
+          <div class="bubble" id="previewBubble">Xabaringiz shu yerda ko‘rinadi...</div>
+          <div class="preview-buttons" id="previewButtons"></div>
+          <div class="time">14:56 ✓✓</div>
+        </div>
+        <div class="preview-settings">
+          <label>MUHARRIR SHRIFTI</label>
+          <select class="select" id="fontFamily" onchange="changeFont()"><option value="DM Sans">DM Sans</option><option value="Manrope">Manrope</option><option value="Arial">Arial</option><option value="Georgia">Georgia</option><option value="monospace">Monospace</option></select>
+          <label>O‘LCHAM</label>
+          <select class="select" id="fontSize" onchange="changeFont()"><option value="12">12 px</option><option value="13" selected>13 px</option><option value="14">14 px</option><option value="16">16 px</option><option value="18">18 px</option></select>
+        </div>
+        <div class="hint">Shrift sozlamalari muharrir va ushbu oldindan ko‘rish oynasiga ta’sir qiladi. Telegram ilovasida shriftni foydalanuvchining o‘zi belgilaydi.</div>
+      </div>
+    </section>
+  </div>
+  <footer>TELECRAFT STUDIO · BUILT FOR TELEGRAM BOT MESSAGES</footer>
+</main>
+
+<div class="modal-back" id="settingsModal" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <h3>Bot sozlamalari</h3>
+    <p>Telegram BotFather bergan tokenni kiriting. Token faqat shu brauzerda saqlanadi.</p>
+    <div class="field"><label>BOT TOKEN</label><input class="input" id="tokenInput" type="password" placeholder="123456789:ABC-DEF..." autocomplete="off"></div>
+    <div class="field"><label>SAQLANGAN TOKEN</label><div id="tokenState" class="hint">Hozircha token saqlanmagan.</div></div>
+    <div class="modal-actions">
+      <button class="btn ghost danger" onclick="clearToken()">O‘chirish</button>
+      <button class="btn" onclick="closeSettings()">Bekor qilish</button>
+      <button class="btn primary" onclick="saveToken()">Saqlash</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+let buttons=[], imageData=null;
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function openSettings(){$('tokenInput').value=localStorage.getItem('telecraft_bot_token')||'';$('tokenState').textContent=localStorage.getItem('telecraft_bot_token')?'Token ushbu brauzerda saqlangan.':'Hozircha token saqlanmagan.';$('settingsModal').classList.add('show')}
+function closeSettings(){$('settingsModal').classList.remove('show')}
+function saveToken(){const v=$('tokenInput').value.trim();if(!/^\d+:[A-Za-z0-9_-]+$/.test(v)){toast('Token formati noto‘g‘ri ko‘rinadi.');return}localStorage.setItem('telecraft_bot_token',v);closeSettings();refreshStatus();toast('Token saqlandi.')}
+function clearToken(){localStorage.removeItem('telecraft_bot_token');$('tokenInput').value='';closeSettings();refreshStatus();toast('Token o‘chirildi.')}
+function refreshStatus(){const ready=!!localStorage.getItem('telecraft_bot_token');$('status').classList.toggle('ready',ready);$('statusText').textContent=ready?'Token saqlangan':'Bot ulanmagan'}
+function insertTag(tag){const el=$('message'),a=el.selectionStart,b=el.selectionEnd,selected=el.value.slice(a,b),open=tag==='code'?'<code>':'<'+tag+'>',close='</'+tag+'>';const replacement=open+(selected||'matn')+close;el.setRangeText(replacement,a,b,'select');el.focus();updatePreview()}
+function insertLink(){const url=prompt('Havola manzilini kiriting:','https://');if(!url)return;const el=$('message'),a=el.selectionStart,b=el.selectionEnd,txt=el.value.slice(a,b)||'Havola';el.setRangeText('<a href="'+url.replace(/"/g,'&quot;')+'">'+txt+'</a>',a,b,'select');el.focus();updatePreview()}
+function insertEmoji(){const e=prompt('Emoji kiriting:','✨');if(!e)return;const el=$('message'),a=el.selectionStart,b=el.selectionEnd;el.setRangeText(e,a,b,'end');el.focus();updatePreview()}
+function addButton(label='',url=''){buttons.push({label,url});renderButtonList()}
+function removeButton(i){buttons.splice(i,1);renderButtonList()}
+function renderButtonList(){$('buttonCount').textContent=buttons.length+' TA TUGMA';$('buttonList').innerHTML='';buttons.forEach((b,i)=>{const row=document.createElement('div');row.className='button-row';const name=document.createElement('input');name.className='input';name.placeholder='Tugma nomi';name.value=b.label;name.oninput=()=>{buttons[i].label=name.value;updatePreview()};const link=document.createElement('input');link.className='input';link.placeholder='https://...';link.value=b.url;link.oninput=()=>{buttons[i].url=link.value;updatePreview()};const del=document.createElement('button');del.className='remove';del.textContent='×';del.onclick=()=>removeButton(i);row.append(name,link,del);$('buttonList').append(row)});updatePreview()}
+function safePreview(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/&lt;(\/?)(b|strong|i|em|u|s|strike|code|pre|blockquote|tg-spoiler)&gt;/gi,'<$1$2>').replace(/&lt;a href=&quot;(https?:\/\/[^&]+)&quot;&gt;/gi,'<a href="$1">').replace(/&lt;\/a&gt;/gi,'</a>').replace(/\n/g,'<br>')}
+function updatePreview(){let txt=$('message').value;let html=safePreview(txt);$('previewBubble').innerHTML=(imageData?'<img src="'+imageData+'" alt="Biriktirilgan rasm">':'')+(html||'Xabaringiz shu yerda ko‘rinadi...');$('previewButtons').innerHTML='';buttons.forEach(b=>{if(!b.label.trim())return;const a=document.createElement('a');a.textContent=b.label;a.href=b.url||'#';a.target='_blank';a.rel='noopener';$('previewButtons').append(a)})}
+function changeFont(){const f=$('fontFamily').value,s=$('fontSize').value;$('message').style.fontFamily=f;$('message').style.fontSize=s+'px';$('previewBubble').style.fontFamily=f;$('previewBubble').style.fontSize=s+'px'}
+function loadImage(input){const file=input.files&&input.files[0];if(!file)return;if(!file.type.startsWith('image/')){toast('Faqat rasm faylini tanlang.');return}if(file.size>10*1024*1024){toast('Rasm 10 MB dan kichik bo‘lishi kerak.');input.value='';return}const reader=new FileReader();reader.onload=()=>{imageData=reader.result;$('imagePreview').src=imageData;$('imagePreview').style.display='block';updatePreview()};reader.readAsDataURL(file)}
+function buildPayload(){const text=$('message').value.trim();const keyboard=buttons.filter(b=>b.label.trim()&&/^https?:\/\/\S+$/i.test(b.url.trim())).map(b=>({text:b.label.trim(),url:b.url.trim()}));const payload={chat_id:$('chatId').value.trim(),parse_mode:'HTML',reply_markup:{inline_keyboard:[]}};for(let i=0;i<keyboard.length;i+=2)payload.reply_markup.inline_keyboard.push(keyboard.slice(i,i+2));if(imageData){payload.caption=text;payload.photo='[image file]'}else payload.text=text;return payload}
+function validBeforeSend(){if(!localStorage.getItem('telecraft_bot_token')){toast('Avval TOKEN sozlamalariga token kiriting.');openSettings();return false}if(!$('chatId').value.trim()){toast('Chat ID ni kiriting.');$('chatId').focus();return false}if(!$('message').value.trim()&&!imageData){toast('Xabar matnini yozing yoki rasm biriktiring.');return false}const bad=buttons.find(b=>b.label.trim()&&!/^https?:\/\/\S+$/i.test(b.url.trim()));if(bad){toast('Har bir tugmaga to‘g‘ri https:// yoki http:// havola kiriting.');return false}return true}
+function makeKeyboard(){const rows=[];const arr=buttons.filter(b=>b.label.trim()).map(b=>({text:b.label.trim(),url:b.url.trim()}));for(let i=0;i<arr.length;i+=2)rows.push(arr.slice(i,i+2));return rows}
+async function sendMessage(){if(!validBeforeSend())return;const token=localStorage.getItem('telecraft_bot_token'),chat_id=$('chatId').value.trim(),text=$('message').value.trim(),keyboard=makeKeyboard();const reply_markup=keyboard.length?JSON.stringify({inline_keyboard:keyboard}):null;let url='https://api.telegram.org/bot'+token+'/';let form=new FormData();form.append('chat_id',chat_id);if(reply_markup)form.append('reply_markup',reply_markup);
+try{let res;if(imageData){const file=$('imageFile').files[0];if(!file){toast('Rasmni qayta tanlang.');return}form.append('photo',file);if(text){form.append('caption',text);form.append('parse_mode','HTML')}res=await fetch(url+'sendPhoto',{method:'POST',body:form})}else{form.append('text',text);form.append('parse_mode','HTML');res=await fetch(url+'sendMessage',{method:'POST',body:form})}const data=await res.json();if(!data.ok)throw new Error(data.description||'Telegram API xatoligi');toast('Xabar Telegram’ga muvaffaqiyatli yuborildi!')}catch(e){toast('Yuborilmadi: '+e.message)}}
+async function copyJson(){const payload=buildPayload();try{await navigator.clipboard.writeText(JSON.stringify(payload,null,2));toast('JSON nusxalandi. Rasm bo‘lsa, u alohida fayl sifatida yuboriladi.')}catch(e){toast('Clipboard ruxsati yo‘q. Sahifani HTTPS yoki localhost orqali oching.')}} 
+function resetEditor(){if(!confirm('Muharrirdagi barcha ma’lumotlarni tozalaysizmi?'))return;$('message').value='';$('chatId').value='';buttons=[];imageData=null;$('imageFile').value='';$('imagePreview').style.display='none';renderButtonList();updatePreview();toast('Muharrir tozalandi.')}
+refreshStatus();renderButtonList();changeFont();
+</script>
+</body>
+</html>
